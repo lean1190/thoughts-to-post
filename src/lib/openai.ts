@@ -74,7 +74,7 @@ The image should be:
   const response = await openai.images.generate({
     model: 'dall-e-3',
     prompt: imagePrompt,
-    size: '1024x1536',
+    size: '1024x1792',
     quality: 'standard',
     n: 1,
   });

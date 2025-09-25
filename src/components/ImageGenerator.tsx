@@ -123,7 +123,7 @@ export default function ImageGenerator({ post }: ImageGeneratorProps) {
           </div>
           
           <div className="border border-gray-200 rounded-lg overflow-hidden">
-            <Image
+            <img
               src={generatedImageUrl}
               alt="Generated LinkedIn post image"
               width={1024}
