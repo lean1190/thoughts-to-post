@@ -16,7 +16,7 @@ export default function ImageGenerator({ post }: ImageGeneratorProps) {
   const generateImage = async () => {
     setIsGenerating(true);
     setError('');
-    
+
     try {
       const response = await fetch('/api/generate-image', {
         method: 'POST',
@@ -121,9 +121,9 @@ export default function ImageGenerator({ post }: ImageGeneratorProps) {
               </button>
             </div>
           </div>
-          
+
           <div className="border border-gray-200 rounded-lg overflow-hidden">
-            <img
+            <Image
               src={generatedImageUrl}
               alt="Generated LinkedIn post image"
               width={1024}
@@ -131,7 +131,7 @@ export default function ImageGenerator({ post }: ImageGeneratorProps) {
               className="w-full h-auto"
             />
           </div>
-          
+
           <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
             <p className="font-medium mb-1">Post Content:</p>
             <p className="text-xs">{post.substring(0, 200)}...</p>
