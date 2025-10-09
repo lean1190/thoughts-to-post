@@ -17,12 +17,12 @@ interface ThoughtCardProps {
   onUpdate: (id: string, newText: string) => void;
 }
 
-export default function ThoughtCard({ 
-  thought, 
-  isSelected, 
-  onSelect, 
-  onDelete, 
-  onUpdate 
+export default function ThoughtCard({
+  thought,
+  isSelected,
+  onSelect,
+  onDelete,
+  onUpdate
 }: ThoughtCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(thought.text);
@@ -49,37 +49,35 @@ export default function ThoughtCard({
   };
 
   return (
-    <div 
-      className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
-        isSelected 
-          ? 'border-blue-500 bg-blue-50' 
-          : 'border-gray-200 bg-white hover:border-gray-300'
-      }`}
+    <div
+      className={`p-4 rounded-lg transition-all cursor-pointer ${isSelected
+        ? 'border-blue-500 bg-blue-500/20'
+        : 'border-white/20 bg-white/5 hover:border-white/30 hover:bg-white/10'
+        }`}
       onClick={() => onSelect(thought.id)}
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center space-x-2">
-          <div 
-            className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
-              isSelected 
-                ? 'border-blue-500 bg-blue-500' 
-                : 'border-gray-300'
-            }`}
+          <div
+            className={`w-4 h-4 rounded border-2 flex items-center justify-center ${isSelected
+              ? 'border-blue-500 bg-blue-500'
+              : 'border-white/40'
+              }`}
           >
             {isSelected && <Check className="w-3 h-3 text-white" />}
           </div>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-400">
             {formatTimestamp(thought.timestamp)}
           </span>
         </div>
-        
+
         <div className="flex items-center space-x-1">
           <button
             onClick={(e) => {
               e.stopPropagation();
               setIsEditing(true);
             }}
-            className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-1 text-gray-400 hover:text-white transition-colors"
           >
             <Edit3 className="w-4 h-4" />
           </button>
@@ -88,7 +86,7 @@ export default function ThoughtCard({
               e.stopPropagation();
               onDelete(thought.id);
             }}
-            className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+            className="p-1 text-gray-400 hover:text-red-400 transition-colors"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -100,7 +98,7 @@ export default function ThoughtCard({
           <textarea
             value={editText}
             onChange={(e) => setEditText(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 border border-white/20 bg-white/10 text-white rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
             rows={3}
             onClick={(e) => e.stopPropagation()}
           />
@@ -119,14 +117,14 @@ export default function ThoughtCard({
                 e.stopPropagation();
                 handleCancel();
               }}
-              className="px-3 py-1 bg-gray-300 text-gray-700 text-sm rounded hover:bg-gray-400 transition-colors"
+              className="px-3 py-1 bg-white/20 text-white text-sm rounded hover:bg-white/30 transition-colors"
             >
               Cancel
             </button>
           </div>
         </div>
       ) : (
-        <p className="text-gray-800 leading-relaxed">{thought.text}</p>
+        <p className="text-white leading-relaxed">{thought.text}</p>
       )}
     </div>
   );

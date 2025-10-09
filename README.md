@@ -5,7 +5,6 @@ Post, without the anxiety
 Document, don't create
 
 [x] Add local persistence
-[] Add TailwindCSS
 [] Replace eslint with Biome
 [] Add husky hooks
 [] Replace APIs with server actions

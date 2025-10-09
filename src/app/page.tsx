@@ -1,12 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLocalStorage } from 'usehooks-ts';
 import VoiceRecorder from '@/components/VoiceRecorder';
 import ThoughtCard from '@/components/ThoughtCard';
-import LinkedInPostGenerator from '@/components/LinkedInPostGenerator';
-import ImageGenerator from '@/components/ImageGenerator';
-import { Brain, FileText, Image as ImageIcon } from 'lucide-react';
 
 interface Thought {
   id: string;
@@ -15,6 +12,8 @@ interface Thought {
 }
 
 export default function Home() {
+  const router = useRouter();
+
   // Custom serializers to handle Date objects
   const serializeThoughts = (thoughts: Thought[]): string => {
     return JSON.stringify(thoughts);
@@ -34,13 +33,14 @@ export default function Home() {
     {
       serializer: serializeThoughts,
       deserializer: deserializeThoughts,
-      initializeWithValue: true
+      initializeWithValue: false
     }
   );
 
-  const [selectedThoughtIds, setSelectedThoughtIds] = useState<string[]>([]);
-  const [generatedPost, setGeneratedPost] = useState('');
-  const [showImageGenerator, setShowImageGenerator] = useState(false);
+  const [selectedThoughtIds, setSelectedThoughtIds] = useLocalStorage<string[]>(
+    'selectedThoughtIds',
+    []
+  );
 
   const addThought = (text: string) => {
     const newThought: Thought = {
@@ -84,139 +84,50 @@ export default function Home() {
     .filter(thought => selectedThoughtIds.includes(thought.id))
     .map(thought => thought.text);
 
-  const handleGenerateImage = (post: string) => {
-    setGeneratedPost(post);
-    setShowImageGenerator(true);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Voice to LinkedIn
-          </h1>
-          <p className="text-lg text-gray-600">
-            Transform your voice into engaging LinkedIn posts
-          </p>
+
+        {/* Fixed Recording Button */}
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
+          <VoiceRecorder onTranscription={addThought} />
         </div>
 
-        {/* Progress Steps */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center">
-                <Brain className="w-4 h-4" />
-              </div>
-              <span className="text-sm font-medium text-gray-700">Record Thoughts</span>
+        {/* Thoughts Section - Shows when scrolling */}
+        {thoughts.length > 0 && (
+          <div className="mt-32 space-y-6">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-semibold text-white mb-2">
+                Your Thoughts ({thoughts.length})
+              </h2>
+              <p className="text-gray-400">Select the thoughts you want to include in your post</p>
             </div>
-            <div className="w-8 h-0.5 bg-gray-300"></div>
-            <div className="flex items-center space-x-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${selectedThoughts.length > 0 ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-500'
-                }`}>
-                <FileText className="w-4 h-4" />
-              </div>
-              <span className="text-sm font-medium text-gray-700">Generate Post</span>
-            </div>
-            <div className="w-8 h-0.5 bg-gray-300"></div>
-            <div className="flex items-center space-x-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${showImageGenerator ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-500'
-                }`}>
-                <ImageIcon className="w-4 h-4" />
-              </div>
-              <span className="text-sm font-medium text-gray-700">Create Image</span>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+              {thoughts.map(thought => (
+                <div key={thought.id} className="backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-2 hover:bg-white/10 transition-all duration-300">
+                  <ThoughtCard
+                    thought={thought}
+                    isSelected={selectedThoughtIds.includes(thought.id)}
+                    onSelect={toggleThoughtSelection}
+                    onDelete={deleteThought}
+                    onUpdate={updateThought}
+                  />
+                </div>
+              ))}
             </div>
           </div>
-        </div>
+        )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column - Voice Recording and Thoughts */}
-          <div className="space-y-6">
-            <VoiceRecorder onTranscription={addThought} />
-
-            {thoughts.length > 0 && (
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                  Your Thoughts ({thoughts.length})
-                </h2>
-                <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {thoughts.map(thought => (
-                    <ThoughtCard
-                      key={thought.id}
-                      thought={thought}
-                      isSelected={selectedThoughtIds.includes(thought.id)}
-                      onSelect={toggleThoughtSelection}
-                      onDelete={deleteThought}
-                      onUpdate={updateThought}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Right Column - Post Generation and Image */}
-          <div className="space-y-6">
-            {selectedThoughts.length > 0 && (
-              <LinkedInPostGenerator
-                selectedThoughts={selectedThoughts}
-                onGenerateImage={handleGenerateImage}
-              />
-            )}
-
-            {showImageGenerator && generatedPost && (
-              <ImageGenerator post={generatedPost} />
-            )}
-          </div>
-        </div>
-
-        {/* Instructions */}
-        {thoughts.length === 0 && (
-          <div className="mt-12 text-center">
-            <div className="bg-white rounded-lg shadow-md p-8 max-w-2xl mx-auto">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                How it works
-              </h3>
-              <div className="space-y-4 text-left">
-                <div className="flex items-start space-x-3">
-                  <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                    1
-                  </div>
-                  <p className="text-gray-600">
-                    <strong>Record your voice:</strong> Click the microphone button and speak your thoughts.
-                    The app will transcribe your speech using AI.
-                  </p>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                    2
-                  </div>
-                  <p className="text-gray-600">
-                    <strong>Select thoughts:</strong> Choose which thoughts you want to include in your LinkedIn post
-                    by clicking on the thought cards.
-                  </p>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                    3
-                  </div>
-                  <p className="text-gray-600">
-                    <strong>Generate post:</strong> Click &quot;Generate LinkedIn Post&quot; to transform your selected
-                    thoughts into a professional, engaging LinkedIn post.
-                  </p>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                    4
-                  </div>
-                  <p className="text-gray-600">
-                    <strong>Create image:</strong> Generate a professional image that represents the core idea
-                    of your LinkedIn post.
-                  </p>
-                </div>
-              </div>
-            </div>
+        {/* Floating CTA Button */}
+        {selectedThoughts.length > 0 && (
+          <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+            <button
+              onClick={() => router.push('/generate')}
+              className="cursor-pointer bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-900 text-white px-8 py-4 rounded-full shadow-2xl backdrop-blur-md border border-white/20 font-semibold text-lg transition-all duration-300 transform hover:scale-105"
+            >
+              ✨ Make Magic Post
+            </button>
           </div>
         )}
       </div>

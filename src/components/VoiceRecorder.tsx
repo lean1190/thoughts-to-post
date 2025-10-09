@@ -73,16 +73,14 @@ export default function VoiceRecorder({ onTranscription }: VoiceRecorderProps) {
   };
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold text-gray-800">Record Your Thoughts</h2>
-      
+    <div className="flex flex-col items-center space-y-4">
       <div className="flex items-center space-x-4">
         {!isRecording && !isTranscribing && (
           <button
             onClick={startRecording}
-            className="flex items-center space-x-2 px-6 py-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+            className="flex items-center space-x-2 px-8 py-4 backdrop-blur-md bg-red-500/20 border border-red-400/30 text-white rounded-full hover:bg-red-500/30 hover:border-red-400/50 transition-all duration-300 shadow-2xl font-semibold"
           >
-            <Mic className="w-5 h-5" />
+            <Mic className="w-6 h-6" />
             <span>Start Recording</span>
           </button>
         )}
@@ -90,25 +88,25 @@ export default function VoiceRecorder({ onTranscription }: VoiceRecorderProps) {
         {isRecording && (
           <button
             onClick={stopRecording}
-            className="flex items-center space-x-2 px-6 py-3 bg-gray-500 text-white rounded-full hover:bg-gray-600 transition-colors"
+            className="flex items-center space-x-2 px-8 py-4 backdrop-blur-md bg-gray-500/20 border border-gray-400/30 text-white rounded-full hover:bg-gray-500/30 hover:border-gray-400/50 transition-all duration-300 shadow-2xl font-semibold"
           >
-            <Square className="w-5 h-5" />
+            <Square className="w-6 h-6" />
             <span>Stop Recording</span>
           </button>
         )}
 
         {isTranscribing && (
-          <div className="flex items-center space-x-2 px-6 py-3 bg-blue-500 text-white rounded-full">
-            <Loader2 className="w-5 h-5 animate-spin" />
+          <div className="flex items-center space-x-2 px-8 py-4 backdrop-blur-md bg-blue-500/20 border border-blue-400/30 text-white rounded-full shadow-2xl font-semibold">
+            <Loader2 className="w-6 h-6 animate-spin" />
             <span>Transcribing...</span>
           </div>
         )}
       </div>
 
       {isRecording && (
-        <div className="flex items-center space-x-2 text-red-500">
-          <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-          <span className="text-sm">Recording...</span>
+        <div className="flex items-center space-x-2 text-red-400">
+          <div className="w-3 h-3 bg-red-400 rounded-full animate-pulse"></div>
+          <span className="text-sm font-medium">Recording...</span>
         </div>
       )}
     </div>
