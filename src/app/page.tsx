@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useLocalStorage } from 'usehooks-ts';
 import VoiceRecorder from '@/components/VoiceRecorder';
 import ThoughtCard from '@/components/ThoughtCard';
 import LinkedInPostGenerator from '@/components/LinkedInPostGenerator';
@@ -14,7 +15,29 @@ interface Thought {
 }
 
 export default function Home() {
-  const [thoughts, setThoughts] = useState<Thought[]>([]);
+  // Custom serializers to handle Date objects
+  const serializeThoughts = (thoughts: Thought[]): string => {
+    return JSON.stringify(thoughts);
+  };
+
+  const deserializeThoughts = (value: string): Thought[] => {
+    const parsed = JSON.parse(value);
+    return parsed.map((thought: { id: string; text: string; timestamp: string }) => ({
+      ...thought,
+      timestamp: new Date(thought.timestamp)
+    }));
+  };
+
+  const [thoughts, setThoughts, removeThoughts] = useLocalStorage<Thought[]>(
+    'thoughts',
+    [],
+    {
+      serializer: serializeThoughts,
+      deserializer: deserializeThoughts,
+      initializeWithValue: true
+    }
+  );
+
   const [selectedThoughtIds, setSelectedThoughtIds] = useState<string[]>([]);
   const [generatedPost, setGeneratedPost] = useState('');
   const [showImageGenerator, setShowImageGenerator] = useState(false);
@@ -29,21 +52,29 @@ export default function Home() {
   };
 
   const deleteThought = (id: string) => {
-    setThoughts(prev => prev.filter(thought => thought.id !== id));
+    setThoughts(prev => {
+      const updatedThoughts = prev.filter(thought => thought.id !== id);
+      // Clear localStorage if no thoughts remain
+      if (updatedThoughts.length === 0) {
+        removeThoughts();
+        return [];
+      }
+      return updatedThoughts;
+    });
     setSelectedThoughtIds(prev => prev.filter(thoughtId => thoughtId !== id));
   };
 
   const updateThought = (id: string, newText: string) => {
-    setThoughts(prev => 
-      prev.map(thought => 
+    setThoughts(prev =>
+      prev.map(thought =>
         thought.id === id ? { ...thought, text: newText } : thought
       )
     );
   };
 
   const toggleThoughtSelection = (id: string) => {
-    setSelectedThoughtIds(prev => 
-      prev.includes(id) 
+    setSelectedThoughtIds(prev =>
+      prev.includes(id)
         ? prev.filter(thoughtId => thoughtId !== id)
         : [...prev, id]
     );
@@ -82,18 +113,16 @@ export default function Home() {
             </div>
             <div className="w-8 h-0.5 bg-gray-300"></div>
             <div className="flex items-center space-x-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                selectedThoughts.length > 0 ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-500'
-              }`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${selectedThoughts.length > 0 ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-500'
+                }`}>
                 <FileText className="w-4 h-4" />
               </div>
               <span className="text-sm font-medium text-gray-700">Generate Post</span>
             </div>
             <div className="w-8 h-0.5 bg-gray-300"></div>
             <div className="flex items-center space-x-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                showImageGenerator ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-500'
-              }`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${showImageGenerator ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-500'
+                }`}>
                 <ImageIcon className="w-4 h-4" />
               </div>
               <span className="text-sm font-medium text-gray-700">Create Image</span>
@@ -105,7 +134,7 @@ export default function Home() {
           {/* Left Column - Voice Recording and Thoughts */}
           <div className="space-y-6">
             <VoiceRecorder onTranscription={addThought} />
-            
+
             {thoughts.length > 0 && (
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">
@@ -155,7 +184,7 @@ export default function Home() {
                     1
                   </div>
                   <p className="text-gray-600">
-                    <strong>Record your voice:</strong> Click the microphone button and speak your thoughts. 
+                    <strong>Record your voice:</strong> Click the microphone button and speak your thoughts.
                     The app will transcribe your speech using AI.
                   </p>
                 </div>
@@ -164,7 +193,7 @@ export default function Home() {
                     2
                   </div>
                   <p className="text-gray-600">
-                    <strong>Select thoughts:</strong> Choose which thoughts you want to include in your LinkedIn post 
+                    <strong>Select thoughts:</strong> Choose which thoughts you want to include in your LinkedIn post
                     by clicking on the thought cards.
                   </p>
                 </div>
@@ -173,7 +202,7 @@ export default function Home() {
                     3
                   </div>
                   <p className="text-gray-600">
-                    <strong>Generate post:</strong> Click &quot;Generate LinkedIn Post&quot; to transform your selected 
+                    <strong>Generate post:</strong> Click &quot;Generate LinkedIn Post&quot; to transform your selected
                     thoughts into a professional, engaging LinkedIn post.
                   </p>
                 </div>
@@ -182,7 +211,7 @@ export default function Home() {
                     4
                   </div>
                   <p className="text-gray-600">
-                    <strong>Create image:</strong> Generate a professional image that represents the core idea 
+                    <strong>Create image:</strong> Generate a professional image that represents the core idea
                     of your LinkedIn post.
                   </p>
                 </div>

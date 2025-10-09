@@ -4,7 +4,7 @@ For LinkedIn newbies
 Post, without the anxiety
 Document, don't create
 
-[] Add local persistence
+[x] Add local persistence
 [] Add TailwindCSS
 [] Replace eslint with Biome
 [] Add husky hooks
