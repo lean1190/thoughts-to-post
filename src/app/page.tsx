@@ -124,9 +124,15 @@ export default function Home() {
           <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
             <button
               onClick={() => router.push('/generate')}
-              className="cursor-pointer bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-900 text-white px-8 py-4 rounded-full shadow-2xl backdrop-blur-md border border-white/20 font-semibold text-lg transition-all duration-300 transform hover:scale-105"
+              className="relative cursor-pointer text-white px-8 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border border-white/20 font-semibold text-lg transition-all duration-500 transform hover:scale-105 overflow-hidden group"
+              style={{
+                background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(37, 99, 235, 0.2) 100%)',
+                boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(255,255,255,0.2)'
+              }}
             >
-              ✨ Make Magic Post
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-blue-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+              <span className="relative z-10">✨ Make Magic Post</span>
             </button>
           </div>
         )}

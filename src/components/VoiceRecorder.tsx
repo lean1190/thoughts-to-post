@@ -78,34 +78,54 @@ export default function VoiceRecorder({ onTranscription }: VoiceRecorderProps) {
         {!isRecording && !isTranscribing && (
           <button
             onClick={startRecording}
-            className="flex items-center space-x-2 px-8 py-4 backdrop-blur-md bg-red-500/20 border border-red-400/30 text-white rounded-full hover:bg-red-500/30 hover:border-red-400/50 transition-all duration-300 shadow-2xl font-semibold"
+            className="relative flex items-center space-x-2 px-8 py-4 backdrop-blur-xl bg-white/10 border border-white/20 text-white rounded-2xl hover:bg-white/15 hover:border-white/30 transition-all duration-500 shadow-2xl font-semibold overflow-hidden group"
+            style={{
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2)'
+            }}
           >
-            <Mic className="w-6 h-6" />
-            <span>Start Recording</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+            <Mic className="w-6 h-6 relative z-10" />
+            <span className="relative z-10">Start Recording</span>
           </button>
         )}
 
         {isRecording && (
           <button
             onClick={stopRecording}
-            className="flex items-center space-x-2 px-8 py-4 backdrop-blur-md bg-gray-500/20 border border-gray-400/30 text-white rounded-full hover:bg-gray-500/30 hover:border-gray-400/50 transition-all duration-300 shadow-2xl font-semibold"
+            className="relative flex items-center space-x-2 px-8 py-4 backdrop-blur-xl bg-white/10 border border-white/20 text-white rounded-2xl hover:bg-white/15 hover:border-white/30 transition-all duration-500 shadow-2xl font-semibold overflow-hidden group"
+            style={{
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2)'
+            }}
           >
-            <Square className="w-6 h-6" />
-            <span>Stop Recording</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-gray-500/20 to-slate-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+            <Square className="w-6 h-6 relative z-10" />
+            <span className="relative z-10">Stop Recording</span>
           </button>
         )}
 
         {isTranscribing && (
-          <div className="flex items-center space-x-2 px-8 py-4 backdrop-blur-md bg-blue-500/20 border border-blue-400/30 text-white rounded-full shadow-2xl font-semibold">
-            <Loader2 className="w-6 h-6 animate-spin" />
-            <span>Transcribing...</span>
+          <div
+            className="relative flex items-center space-x-2 px-8 py-4 backdrop-blur-xl bg-white/10 border border-white/20 text-white rounded-2xl shadow-2xl font-semibold overflow-hidden"
+            style={{
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2)'
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
+            <Loader2 className="w-6 h-6 animate-spin relative z-10" />
+            <span className="relative z-10">Transcribing...</span>
           </div>
         )}
       </div>
 
       {isRecording && (
-        <div className="flex items-center space-x-2 text-red-400">
-          <div className="w-3 h-3 bg-red-400 rounded-full animate-pulse"></div>
+        <div className="flex items-center space-x-2 text-white/80 backdrop-blur-sm bg-white/5 rounded-full px-4 py-2 border border-white/10">
+          <div className="w-3 h-3 bg-red-400 rounded-full animate-pulse shadow-lg" style={{ boxShadow: '0 0 10px rgba(248, 113, 113, 0.5)' }}></div>
           <span className="text-sm font-medium">Recording...</span>
         </div>
       )}
